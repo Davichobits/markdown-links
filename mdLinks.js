@@ -8,8 +8,8 @@ const mdLinks = (userPath) => {
       reject(new Error('El path no fue proporcionado.'));
     }
 
-    // Comprobar si la ruta ingresada es relativa o absoluta
-    // let userPathAbsolute = returnAbsolutePath(userPath);
+    //Comprobar si la ruta ingresada es relativa o absoluta
+    let userPathAbsolute = returnAbsolutePath(userPath);
 
     resolve([])
   })
