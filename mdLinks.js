@@ -1,4 +1,5 @@
-const path = require('path')
+const path = require('path');
+const fsPromises = require('fs/promises');
 
 const mdLinks = (userPath) => {
   return new Promise((resolve, reject) => {
@@ -9,11 +10,16 @@ const mdLinks = (userPath) => {
     }
 
     //Comprobar si la ruta ingresada es relativa o absoluta
-    let userPathAbsolute = path.resolve(userPath);
-   
-
+    const userPathAbsolute = path.resolve(userPath);
     
-    resolve([])
+    fsPromises.access(userPathAbsolute) // se resuelve si se puede acceder al archivo o directorio y se rechaza en caso de que no.
+    .then(result => {
+      resolve([]);
+    })
+    .catch(error => {
+      reject(new Error(`La ruta ${error.path} no existe`))
+    })
+
   })
 }
 module.exports = {
