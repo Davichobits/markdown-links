@@ -1,4 +1,4 @@
-const { returnAbsolutePath } = require('./data.js')
+const path = require('path')
 
 const mdLinks = (userPath) => {
   return new Promise((resolve, reject) => {
@@ -9,8 +9,10 @@ const mdLinks = (userPath) => {
     }
 
     //Comprobar si la ruta ingresada es relativa o absoluta
-    let userPathAbsolute = returnAbsolutePath(userPath);
+    let userPathAbsolute = path.resolve(userPath);
+   
 
+    
     resolve([])
   })
 }
