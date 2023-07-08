@@ -1,9 +1,6 @@
 const { mdLinks } = require('../mdLinks.js');
 const path = require('path')
 
-// import { mdLinks } from "./mdLinks.js";
-// import path from 'path'
-
 describe('test for function mdLinks', () => {
 
   it('should to throw an error if the path doesn.t exist', () => {
@@ -29,8 +26,12 @@ describe('test for function mdLinks', () => {
 
   it('should reject an error if the path is incorrect', ()=>{
     const invalidPath = '../carpeta_prueba/ruta-invalida.md'
-    const absolutePath = path.resolve(invalidPath)
-    expect(mdLinks(invalidPath)).rejects.toThrow(`La ruta ${absolutePath} no existe`)
+    expect(mdLinks(invalidPath)).rejects.toThrow('La ruta ingresada no existe')
+  })
+
+  it('should reject an error if the path is not a md file', ()=>{
+    const htmlPath = '../carpeta_prueba/texto.html';
+    expect(mdLinks(htmlPath)).rejects.toThrow('El archivo no es markdown')
   })
 
 });

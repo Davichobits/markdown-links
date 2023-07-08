@@ -1,8 +1,22 @@
 const path = require('path');
+const fs = require('fs');
 const fsPromises = require('fs/promises');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
 
-// import path from 'path'
-// import fsPromises from 'fs/promises'
+const marked = require('marked');
+const renderer = new marked.Renderer();
+
+const options = {
+  mangle: false,
+  headerIds: false
+};
+
+marked.setOptions({
+  renderer,
+  ...options
+});
+
 
 const mdLinks = (userPath) => {
   return new Promise((resolve, reject) => {
@@ -16,11 +30,33 @@ const mdLinks = (userPath) => {
     const userPathAbsolute = path.resolve(userPath);
     
     fsPromises.access(userPathAbsolute) // se resuelve si se puede acceder al archivo o directorio y se rechaza en caso de que no.
-    .then(result => {
-      resolve([]);
+    .then(result => fs.promises.stat(userPathAbsolute)) // Devuelve si la ruta es un archivo
+    .then(stats => {
+      if (stats.isFile()) {
+
+        if(path.extname(userPathAbsolute) !== '.md'){
+          reject(new Error('El archivo no es markdown'))
+        }
+
+        
+
+        // Leer el contenido del archivo
+        fs.readFile(userPathAbsolute, 'utf8', (err, data) => {
+          const html = marked.parse(data);
+          const dom = new JSDOM(html)
+          // dom.window.document.querySelectorAll("a")
+          // resolve(html)
+          const linksDom = [...dom.window.document.getElementsByTagName("a")]
+          const links = []
+          linksDom.forEach(item => {
+            links.push(item.href)
+          })
+          resolve(links)
+        })
+      }
     })
     .catch(error => {
-      reject(new Error(`La ruta ${error.path} no existe`))
+      reject(new Error('La ruta ingresada no existe'))
     })
 
   })
