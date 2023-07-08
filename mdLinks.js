@@ -1,6 +1,9 @@
 const path = require('path');
 const fsPromises = require('fs/promises');
 
+// import path from 'path'
+// import fsPromises from 'fs/promises'
+
 const mdLinks = (userPath) => {
   return new Promise((resolve, reject) => {
 

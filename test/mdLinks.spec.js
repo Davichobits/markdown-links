@@ -1,6 +1,9 @@
 const { mdLinks } = require('../mdLinks.js');
 const path = require('path')
 
+// import { mdLinks } from "./mdLinks.js";
+// import path from 'path'
+
 describe('test for function mdLinks', () => {
 
   it('should to throw an error if the path doesn.t exist', () => {
