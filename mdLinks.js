@@ -31,7 +31,7 @@ const mdLinks = (userPath) => {
     const userPathAbsolute = path.resolve(userPath);
     
     fsPromises.access(userPathAbsolute) // se resuelve si se puede acceder al archivo o directorio y se rechaza en caso de que no.
-    .then(result => fs.promises.stat(userPathAbsolute)) // Devuelve si la ruta es un archivo
+    .then(result => fs.promises.stat(userPathAbsolute)) 
     .then(stats => {
       if (stats.isFile()) {
 
@@ -43,8 +43,6 @@ const mdLinks = (userPath) => {
         fs.readFile(userPathAbsolute, 'utf8', (err, data) => {
           const html = marked.parse(data);
           const dom = new JSDOM(html)
-          // dom.window.document.querySelectorAll("a")
-          // resolve(html)
           const linksDom = [...dom.window.document.getElementsByTagName("a")]
           const links = []
           linksDom.forEach(item => {

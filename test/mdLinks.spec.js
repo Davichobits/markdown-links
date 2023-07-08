@@ -8,30 +8,47 @@ describe('test for function mdLinks', () => {
   });
   
   it('should resolve a promise with a defined value', ()=>{
-    const userPath = '../carpeta_prueba/archivo.md' 
+    const userPath = './carpeta_prueba/archivo.md' 
     mdLinks(userPath).then(data => {
       expect(data).toBeDefined();
     })
   })
   
   it('should resolve a promise with a defined value', ()=>{
-    const userPath = '../carpeta_prueba/archivo.md' 
+    const userPath = './carpeta_prueba/archivo.md' 
     expect(mdLinks(userPath)).resolves.toBeDefined();
   })
   
-  it('should resolve a promise with an array', ()=>{
-    expect(mdLinks('../carpeta_prueba/archivo.md')).resolves.toEqual([])
-  })
-
-
   it('should reject an error if the path is incorrect', ()=>{
-    const invalidPath = '../carpeta_prueba/ruta-invalida.md'
+    const invalidPath = './carpeta_prueba/ruta-invalida.md'
     expect(mdLinks(invalidPath)).rejects.toThrow('La ruta ingresada no existe')
   })
 
   it('should reject an error if the path is not a md file', ()=>{
-    const htmlPath = '../carpeta_prueba/texto.html';
+    const htmlPath = './carpeta_prueba/texto.html';
     expect(mdLinks(htmlPath)).rejects.toThrow('El archivo no es markdown')
+  })
+
+  it('should return an array of objects if the file is valid', ()=>{
+    const userPath = './carpeta_prueba/archivo.md' 
+    const output = [
+      {
+        text: 'google',
+        url: 'https://www.google.com/',
+        file: './carpeta_prueba/archivo.md'
+      },
+      {
+        text: 'youtube',
+        url: 'https://www.youtube.com/CodingTube',
+        file: './carpeta_prueba/archivo.md'
+      },
+      {
+        text: "nose",
+        url: "https://esto-no-existe.com/no-existe",
+        file: "./carpeta_prueba/archivo.md",
+      },
+    ]
+    expect(mdLinks(userPath)).resolves.toEqual(output);
   })
 
 });
