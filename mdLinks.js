@@ -3,6 +3,7 @@ const fs = require('fs');
 const fsPromises = require('fs/promises');
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
+const { LinkObject } = require('./utils/linkObject')
 
 const marked = require('marked');
 const renderer = new marked.Renderer();
@@ -38,8 +39,6 @@ const mdLinks = (userPath) => {
           reject(new Error('El archivo no es markdown'))
         }
 
-        
-
         // Leer el contenido del archivo
         fs.readFile(userPathAbsolute, 'utf8', (err, data) => {
           const html = marked.parse(data);
@@ -49,7 +48,8 @@ const mdLinks = (userPath) => {
           const linksDom = [...dom.window.document.getElementsByTagName("a")]
           const links = []
           linksDom.forEach(item => {
-            links.push(item.href)
+            const newLink = new LinkObject(item.textContent, item.href, userPath)
+            links.push(newLink)
           })
           resolve(links)
         })
@@ -61,6 +61,7 @@ const mdLinks = (userPath) => {
 
   })
 }
+
 module.exports = {
   mdLinks
 }
