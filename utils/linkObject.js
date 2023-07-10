@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 class LinkObject {
   constructor(text, url, file) {
     this.text = text;
@@ -9,11 +11,16 @@ class LinkObject {
     return axios.get(this.url)
       .then((response) => {
         this.status = response.status;
-        this.ok = response.statusText;
+        this.statusText = response.statusText;
       })
       .catch((error) => {
-        this.status = error.response.status;
-        this.ok = error.response.statusText;
+        if (error.response) {
+          this.status = error.response.status;
+          this.statusText = error.response.statusText;
+        } else {
+          this.status = 404;
+          this.statusText = 'FAIL';
+        }
       });
   }
 }

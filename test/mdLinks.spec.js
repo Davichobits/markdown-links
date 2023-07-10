@@ -1,5 +1,4 @@
 const { mdLinks } = require('../mdLinks.js');
-const path = require('path')
 
 describe('test for function mdLinks', () => {
 
@@ -50,6 +49,40 @@ describe('test for function mdLinks', () => {
     ]
     expect(mdLinks(userPath)).resolves.toEqual(output);
   })
+
+  // test('debería lanzar un error cuando el segundo parámetro no es un booleano', () => {
+  //   const userPath = './carpeta_prueba/archivo.md' 
+  //   return expect(mdLinks(userPath, 12)).rejects.toThrow('El segundo parametro debe ser un boleano');
+  // });
+
+  // it('should return and arrays of objects with validate links, when the second parameter si true', ()=>{
+  //   const userPath = './carpeta_prueba/archivo.md' 
+  //   const second_parameter = true;
+  //   const output = [
+  //     {
+  //       text: 'google',
+  //       url: 'https://www.google.com/',
+  //       file: './carpeta_prueba/archivo.md',
+  //       status: 200,
+  //       statusText: 'OK'
+  //     },
+  //     {
+  //       text: 'youtube',
+  //       url: 'https://www.youtube.com/CodingTube',
+  //       file: './carpeta_prueba/archivo.md',
+  //       status: 200,
+  //       statusText: 'OK'
+  //     },
+  //     {
+  //       text: "nose",
+  //       url: "https://esto-no-existe.com/no-existe",
+  //       file: "./carpeta_prueba/archivo.md",
+  //       status: 404,
+  //       statusText: 'FAIL'
+  //     },
+  //   ]
+  //   expect(mdLinks(userPath, second_parameter)).resolves.toEqual(output);
+  // })
 
 });
 

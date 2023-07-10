@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@types/marked": "^5.0.0",
+    "axios": "^1.4.0",
     "jsdom": "^22.1.0",
     "marked": "^5.1.1"
   }
