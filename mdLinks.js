@@ -36,12 +36,12 @@ const mdLinks = (userPath, validate) => {
     .then(result => fs.promises.stat(userPathAbsolute)) 
     .then(stats => {
       if (stats.isFile()) {
-
+        //Es archivo
         if(path.extname(userPathAbsolute) !== '.md'){
           reject(new Error('El archivo no es markdown'))
         }
 
-        // Leer el contenido del archivo
+      //lectura contenido del archivo
         fs.readFile(userPathAbsolute, 'utf8',  (err, data) => {
           const html = marked.parse(data);
           const dom = new JSDOM(html)
@@ -58,7 +58,6 @@ const mdLinks = (userPath, validate) => {
             Promise.all(promises)
               .then(validatedLinks => {
                 links.push(...validatedLinks);
-                // Continuar con el código después de que todos los enlaces se hayan validado
                 resolve(links)
               })
               .catch(error => {
@@ -75,6 +74,68 @@ const mdLinks = (userPath, validate) => {
           // --------------------------
           
         })
+      }else{
+        // En caso de que sea carpeta:
+        const allfiles = fs.readdirSync(userPathAbsolute)
+        const mdFiles = allfiles.filter(item=>item.includes('.md'))
+
+        if(mdFiles.length === 0){
+          reject(new Error('La carpeta no contiene archivos markdown'))
+        }
+
+        const absolutesRoutesMdFiles = []
+        mdFiles.forEach(mdfile => {
+          completeRoute = path.join(userPathAbsolute, mdfile)
+          absolutesRoutesMdFiles.push(completeRoute)
+        })
+
+        const allLinks = []
+        const linksPromises = absolutesRoutesMdFiles.map(absolutesRoutes => {
+          return new Promise((resolve, rejects)=>{
+            //lectura contenido del archivo
+          fs.readFile(absolutesRoutes, 'utf8',  (err, data) => {
+            const html = marked.parse(data);
+            const dom = new JSDOM(html)
+            const linksDom = [...dom.window.document.getElementsByTagName("a")]
+            const links = []
+            // ----------------
+
+            if (validate) {
+              const promises = linksDom.map(item => {
+                const newLink = new LinkObject(item.textContent, item.href, userPath);
+                return newLink.validate().then(res => newLink);
+              });
+              Promise.all(promises)
+              .then(validatedLinks => {
+                links.push(...validatedLinks);
+                console.log(links)
+                return(links)
+              })
+              .catch(error => {
+                reject(error)
+              });
+            } else {
+              linksDom.forEach((item, index) => {
+                const newLink = new LinkObject(item.textContent, item.href, userPath)
+                links.push(newLink)
+              })
+              resolve(links)
+            }
+          })
+          
+          
+          // --------------------------
+          })
+        } )
+        Promise.all(linksPromises)
+        .then(validatedLinks => {
+          allLinks.push(...validatedLinks);
+          resolve(allLinks)
+        })
+        .catch(error => {
+          reject(error)
+        });
+
       }
     })
     .catch(error => {
@@ -92,7 +153,7 @@ module.exports = {
 
 
 
- // ----------------
+// ----------------
 //  const promises = linksDom.map(item => {
 //   const newLink = new LinkObject(item.textContent, item.href, userPath);
 

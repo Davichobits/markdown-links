@@ -84,6 +84,11 @@ describe('test for function mdLinks', () => {
   //   expect(mdLinks(userPath, second_parameter)).resolves.toEqual(output);
   // })
 
+  it('should reject an error if the folder is empty', ()=>{
+    userPath = './carpeta_prueba/carpeta_vacia';
+    return expect(mdLinks(userPath)).rejects.toThrow('La carpeta no contiene archivos markdown');
+  })
+
 });
 
 
