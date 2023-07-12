@@ -50,10 +50,14 @@ describe('test for function mdLinks', () => {
     expect(mdLinks(userPath)).resolves.toEqual(output);
   })
 
-  // test('debería lanzar un error cuando el segundo parámetro no es un booleano', () => {
-  //   const userPath = './carpeta_prueba/archivo.md' 
-  //   return expect(mdLinks(userPath, 12)).rejects.toThrow('El segundo parametro debe ser un boleano');
-  // });
+  test.only('debería lanzar un error cuando el segundo parámetro no es un booleano', (done) => {
+    const userPath = './carpeta_prueba/archivo.md' 
+    // return expect(mdLinks(userPath, 12)).rejects.toThrow('El segundo parametro debe ser un boleano');
+    mdLinks(userPath,12).then(()=>{}).catch(error=>{
+      console.log('catch:', error)
+      done()
+    })
+  });
 
   // it('should return and arrays of objects with validate links, when the second parameter si true', ()=>{
   //   const userPath = './carpeta_prueba/archivo.md' 

@@ -14,6 +14,7 @@ class LinkObject {
         this.statusText = response.statusText;
       })
       .catch((error) => {
+        console.log(error)
         if (error.response) {
           this.status = error.response.status;
           this.statusText = error.response.statusText;
