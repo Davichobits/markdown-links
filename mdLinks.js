@@ -24,12 +24,14 @@ const mdLinks = (userPath, validate) => {
 
     if (!userPath) {
       reject(new Error('El path no fue proporcionado.'));
+      return
     }
 
     const userPathAbsolute = path.resolve(userPath);
 
     if(validate !== undefined && typeof validate !== "boolean"){
       reject(new Error('El segundo parametro debe ser un boleano'));
+      return
     }
     
     fsPromises.access(userPathAbsolute) // se resuelve si se puede acceder al archivo o directorio y se rechaza en caso de que no.
@@ -39,6 +41,7 @@ const mdLinks = (userPath, validate) => {
         //Es archivo
         if(path.extname(userPathAbsolute) !== '.md'){
           reject(new Error('El archivo no es markdown'))
+          return
         }
 
       //lectura contenido del archivo
@@ -59,9 +62,11 @@ const mdLinks = (userPath, validate) => {
               .then(validatedLinks => {
                 links.push(...validatedLinks);
                 resolve(links)
+                return
               })
               .catch(error => {
                 reject(error)
+                return
               });
           } else {
             linksDom.forEach(item => {
@@ -69,6 +74,7 @@ const mdLinks = (userPath, validate) => {
               links.push(newLink)
             })
             resolve(links)
+            return
           }
           
           // --------------------------
@@ -81,6 +87,7 @@ const mdLinks = (userPath, validate) => {
 
         if(mdFiles.length === 0){
           reject(new Error('La carpeta no contiene archivos markdown'))
+          return
         }
 
         const absolutesRoutesMdFiles = []
@@ -91,7 +98,7 @@ const mdLinks = (userPath, validate) => {
 
         const allLinks = []
         const linksPromises = absolutesRoutesMdFiles.map(absolutesRoutes => {
-          return new Promise((resolve, rejects)=>{
+          return new Promise((resolve, reject)=>{
             //lectura contenido del archivo
           fs.readFile(absolutesRoutes, 'utf8',  (err, data) => {
             const html = marked.parse(data);
@@ -108,11 +115,12 @@ const mdLinks = (userPath, validate) => {
               Promise.all(promises)
               .then(validatedLinks => {
                 links.push(...validatedLinks);
-                console.log(links)
-                return(links)
+                resolve(links)
+                return
               })
               .catch(error => {
                 reject(error)
+                return
               });
             } else {
               linksDom.forEach((item, index) => {
@@ -120,6 +128,7 @@ const mdLinks = (userPath, validate) => {
                 links.push(newLink)
               })
               resolve(links)
+              return
             }
           })
           
@@ -131,15 +140,18 @@ const mdLinks = (userPath, validate) => {
         .then(validatedLinks => {
           allLinks.push(...validatedLinks);
           resolve(allLinks)
+          return
         })
         .catch(error => {
           reject(error)
+          return
         });
 
       }
     })
     .catch(error => {
       reject(new Error('La ruta ingresada no existe'))
+      return
     })
 
   })
