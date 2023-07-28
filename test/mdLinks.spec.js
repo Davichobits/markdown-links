@@ -56,8 +56,9 @@ describe('test for function mdLinks', () => {
   });
 
   it('should return and arrays of objects with validate links, when the second parameter si true', ()=>{
-    const userPath = '../carpeta_prueba/archivo.md' 
+    const userPath = './carpeta_prueba/archivo.md' 
     const second_parameter = true;
+
     const output = [
       {
         text: 'google',
@@ -81,13 +82,13 @@ describe('test for function mdLinks', () => {
         statusText: 'FAIL'
       },
     ]
-    expect(mdLinks(userPath, second_parameter)).resolves.toEqual(output);
+    return expect(mdLinks(userPath, second_parameter)).resolves.toEqual(output);
   })
 
-  // it('should reject an error if the folder is empty', ()=>{
-  //   userPath = '../carpeta_prueba/carpeta_vacia';
-  //   return expect(mdLinks(userPath)).rejects.toThrow('La carpeta no contiene archivos markdown');
-  // })
+  it('should reject an error if the folder is empty', ()=>{
+    userPath = './carpeta_prueba/carpeta_vacia';
+    return expect(mdLinks(userPath)).rejects.toThrow('La carpeta no contiene archivos markdown');
+  })
 
 });
 
