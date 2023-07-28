@@ -1,23 +1,12 @@
 const path = require('path');
 const fs = require('fs');
 const fsPromises = require('fs/promises');
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const { LinkObject } = require('./utils/linkObject')
 
-const marked = require('marked');
-const renderer = new marked.Renderer();
-
-const options = {
-  mangle: false,
-  headerIds: false
-};
-
-marked.setOptions({
-  renderer,
-  ...options
-});
-
+const {
+  extractLinksFromDocumentContent,
+  createLinkObjectsArray,
+  createValidatedLinksObjectsArray
+} = require('./utils/library.js');
 
 const mdLinks = (userPath, validate) => {
   return new Promise((resolve, reject) => {
@@ -48,15 +37,13 @@ const mdLinks = (userPath, validate) => {
           fs.readFile(userPathAbsolute, 'utf8', (err, documentContent) => {
             const linksDom = extractLinksFromDocumentContent(documentContent)
 
-            // --------------------------
-            const links = []
             if (validate) {
               createValidatedLinksObjectsArray(linksDom, userPath, resolve, reject)
-            } else {
-              resolve(createLinkObjectsArray(linksDom, userPath))
+            } else{
+              const linksObjectArray = createLinkObjectsArray(linksDom, userPath)
+              resolve(linksObjectArray)
             }
-            // --------------------------
-
+            
           })
         } else {
           // En caso de que sea carpeta:
@@ -74,28 +61,33 @@ const mdLinks = (userPath, validate) => {
             absolutesRoutesMdFiles.push(completeRoute)
           })
 
-          const allLinks = []
+          let allLinks = []
           const linksPromises = absolutesRoutesMdFiles.map(absolutesRoutes => {
             return new Promise((resolve, reject) => {
               //lectura contenido del archivo
               fs.readFile(absolutesRoutes, 'utf8', (err, documentContent) => {
-                const linksDom = extractLinksFromDocumentContent(documentContent)
 
-                // --------------------------
-                
+                const linksDom = extractLinksFromDocumentContent(documentContent)                
+
                 if (validate) {
                   createValidatedLinksObjectsArray(linksDom, userPath, resolve, reject)
-                } else {
-                  resolve(createLinkObjectsArray(linksDom, userPath))
+                } else{
+                  const linksObjectArray = createLinkObjectsArray(linksDom, userPath)
+                  resolve(linksObjectArray)
                 }
-                // --------------------------
+                
               })
             })
           })
           Promise.all(linksPromises)
-            .then(validatedLinks => {
-              allLinks.push(...validatedLinks);
-              resolve(allLinks)
+          .then(validatedLinks => {
+
+              let newArray = []
+              validatedLinks.forEach(array=>{
+                newArray = newArray.concat(array)
+              })
+
+              resolve(newArray)
               return
             })
             .catch(error => {
@@ -113,68 +105,9 @@ const mdLinks = (userPath, validate) => {
   })
 }
 
-
-
-
 module.exports = {
   mdLinks
 }
-
-
-function extractLinksFromDocumentContent(documentContent){
-  const html = marked.parse(documentContent);
-  const dom = new JSDOM(html)
-  return linksDom = [...dom.window.document.getElementsByTagName("a")]
-}
-
-/***
- * Return an array of objects created with the class LinkObject
- * @param {array} linksDom - Array of links from DOM
- * @param {string} filePath - Path of the arrays of links
- */
-function createLinkObjectsArray(linksDom, filePath){
-  const linkObjects = []
-  linksDom.forEach((item) => {
-    const newLink = new LinkObject(item.textContent, item.href, filePath)
-    linkObjects.push(newLink)
-  })
-  return linkObjects
-}
-
-/**
- * Return an array of validated links Objects
- * @param {array} linksDom - Array of links from DOM
- * @param {string} filePath - Path of the arrays of links
- * @param {function} resolve - callback to resolve the promise
- * @param {function} reject - callback to reject the promise
- */
-function createValidatedLinksObjectsArray(linksDom, filePath, resolve, reject){
-  const links = []
-  const promises = linksDom.map(item => {
-    const newLink = new LinkObject(item.textContent, item.href, filePath);
-    return newLink.validate().then(res => newLink);
-  });
-  Promise.all(promises)
-    .then(validatedLinks => {
-      links.push(...validatedLinks);
-      resolve(links)
-      return
-    })
-    .catch(error => {
-      reject(error)
-      return
-    });
-}
-
-
-
-
-
-
-
-
-
-
 
 
 // ----------------
