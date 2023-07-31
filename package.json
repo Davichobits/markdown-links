@@ -29,6 +29,6 @@
   "author": "",
   "license": "ISC",
   "publishConfig": {
-    "@YOUR-USERNAME:registry": "https://npm.pkg.github.com"
+    "@davichobits:registry": "https://npm.pkg.github.com"
   }
 }
