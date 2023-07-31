@@ -27,5 +27,8 @@
     "test": "test"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "publishConfig": {
+    "@YOUR-USERNAME:registry": "https://npm.pkg.github.com"
+  }
 }
