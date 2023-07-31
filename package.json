@@ -1,5 +1,5 @@
 {
-  "name": "md-links",
+  "name": "@davichobits/markdown-links",
   "version": "0.1.0",
   "engines": {
     "node": ">=16.x"
@@ -20,5 +20,12 @@
     "axios": "^1.4.0",
     "jsdom": "^22.1.0",
     "marked": "^5.1.1"
-  }
+  },
+  "description": "Para instalar esta herramienta, tienes que ejecutar el siguiente comando:",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC"
 }
